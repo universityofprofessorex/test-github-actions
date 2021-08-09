@@ -23,12 +23,17 @@ jobs:
         run: |
           brew update
           brew install meilisearch || true
+          cp -av ./homebrew.mxcl.meilisearch.plist /usr/local/Cellar/meilisearch/*/homebrew.mxcl.meilisearch.plist
+          ls -lta /usr/local/Cellar/meilisearch/*/
           brew install nmap || true
           brew services start meilisearch
-          meilisearch --http-addr=http://127.0.0.1:7701 &
+          # meilisearch --http-addr=http://127.0.0.1:7701 &
           # lsof -i -P | grep -i "listen"
           # sleep 30
           set -x;  brew services run meilisearch; set +x
+          brew services list | grep meilisearch
+          sleep 5
+          cat /usr/local/var/log/meilisearch.log || true
 
       - name: Setup Meilisearch
         # if: steps.cache-dev-deps.outputs.cache-hit != 'true'
