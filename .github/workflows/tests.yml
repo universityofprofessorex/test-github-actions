@@ -1,0 +1,38 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  lint_macos:
+    name: Lint code (Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest ]
+        python-version: [3.9]
+    env:
+      MEILI_HTTP_ADDR: 127.0.0.1:7701
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: start meilisearch
+        run: |
+          brew update
+          brew install meilisearch || true
+          brew install nmap || true
+          brew services start meilisearch
+          meilisearch --http-addr=http://127.0.0.1:7701 &
+          # lsof -i -P | grep -i "listen"
+          # sleep 30
+          set -x;  brew services run meilisearch; set +x
+
+      - name: Setup Meilisearch
+        # if: steps.cache-dev-deps.outputs.cache-hit != 'true'
+        run: |
+          curl -i -X POST "http://127.0.0.1:7701/indexes" --data '{ "name": "Memes", "uid": "memes" }' || true
+          set -x; ps aux; set +x
+          set -x; nmap -p- $(curl ipv4.icanhazip.com); set +x
