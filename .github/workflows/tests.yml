@@ -39,5 +39,5 @@ jobs:
         # if: steps.cache-dev-deps.outputs.cache-hit != 'true'
         run: |
           curl -i -X POST "http://127.0.0.1:7701/indexes" --data '{ "name": "Memes", "uid": "memes" }' || true
-          set -x; ps aux; set +x
-          set -x; nmap -p- $(curl ipv4.icanhazip.com); set +x
+          # set -x; ps aux; set +x
+          # set -x; nmap -p- $(curl ipv4.icanhazip.com); set +x
